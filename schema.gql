@@ -1,0 +1,122 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Recording {
+  id: String!
+  value: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  note: String!
+  quest: Quest!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Repeat {
+  id: String!
+  type: RepeatType!
+  interval: Int!
+  quest: Quest!
+}
+
+enum RepeatType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+type Quest {
+  id: String!
+  name: String!
+  description: String!
+  target: Float!
+  unit: String!
+  dueDate: DateTime
+  startDate: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  repeat: Repeat
+  recordings(filter: RecordFilter!): [Recording!]!
+  currentInterval: QuestInterval
+  status: QuestStatus!
+}
+
+input RecordFilter {
+  start: DateTime
+  end: DateTime
+  sortedBy: String!
+}
+
+enum QuestStatus {
+  NOT_STARTED
+  ONGOING
+  COMPLETED
+  FAILED
+}
+
+type QuestInterval {
+  quest: Quest!
+  startDate: DateTime!
+  endDate: DateTime
+  records: [Recording!]!
+  value: Float!
+  status: QuestStatus!
+}
+
+type Query {
+  quests: [Quest!]!
+  quest(id: String!): Quest!
+}
+
+type Mutation {
+  createQuest(createQuestDto: CreateQuestDto!): Quest!
+  updateQuest(updateQuestDto: UpdateQuestDto!): Quest!
+  removeQuest(id: String!): Quest!
+  addRecord(recording: CreateRecordingDto!): Recording!
+  updateRecord(updateRecordingDto: UpdateRecordingDto!): Recording!
+}
+
+input CreateQuestDto {
+  name: String!
+  target: Float!
+  description: String!
+  unit: String!
+  startedAt: DateTime
+  completedAt: DateTime
+  dueDate: DateTime
+  repeat: CreateRepeatDto
+}
+
+input CreateRepeatDto {
+  type: RepeatType! = DAILY
+  interval: Int! = 1
+}
+
+input UpdateQuestDto {
+  name: String
+  target: Float
+  description: String
+  unit: String
+  startedAt: DateTime
+  completedAt: DateTime
+  dueDate: DateTime
+  repeat: CreateRepeatDto
+  id: String!
+}
+
+input CreateRecordingDto {
+  questId: String!
+  value: Float!
+  note: String
+}
+
+input UpdateRecordingDto {
+  value: Float!
+  note: String
+  id: String!
+}
