@@ -44,6 +44,8 @@ type Quest {
   recordings(filter: RecordFilter!): [Recording!]!
   currentInterval: QuestInterval
   status: QuestStatus!
+  parentDependency: QuestDependency
+  childDependency: QuestDependency
 }
 
 input RecordFilter {
@@ -57,6 +59,23 @@ enum QuestStatus {
   ONGOING
   COMPLETED
   FAILED
+}
+
+type QuestDependency {
+  id: String!
+  type: QuestDependencyType!
+  numMinTasks: Int!
+  blocking: Boolean!
+  parent: Quest!
+  parentId: String!
+  dependents: [Quest!]!
+  children: [Quest!]!
+}
+
+enum QuestDependencyType {
+  ONE_OF
+  ALL_TASKS
+  AT_LEAST_X_TASKS
 }
 
 type QuestInterval {
@@ -79,6 +98,9 @@ type Mutation {
   removeQuest(id: String!): Quest!
   addRecord(recording: CreateRecordingDto!): Recording!
   updateRecord(updateRecordingDto: UpdateRecordingDto!): Recording!
+  createDependency(createDependencyDto: CreateQuestDependencyDto!): QuestDependency
+  removeDependency(dependentId: String!): QuestDependency
+  updateDependency(updateDependencyDto: UpdateQuestDependencyDto!): QuestDependency
 }
 
 input CreateQuestDto {
@@ -119,4 +141,16 @@ input UpdateRecordingDto {
   value: Float!
   note: String
   id: String!
+}
+
+input CreateQuestDependencyDto {
+  dependentId: String!
+  parentId: String!
+}
+
+input UpdateQuestDependencyDto {
+  dependentId: String!
+  type: QuestDependencyType
+  numMinTasks: Int
+  blocking: Boolean
 }

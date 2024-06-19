@@ -38,7 +38,6 @@ describe('RepeatService', () => {
       quest,
       currentDate,
     );
-    console.log({ intervalStart, expected });
     expect(isDayEqual(intervalStart, expected)).toBe(true);
   };
 
