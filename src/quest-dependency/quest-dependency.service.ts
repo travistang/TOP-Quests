@@ -117,4 +117,21 @@ export class QuestDependencyService {
       this.mapEntityToDb(updatedDependency),
     );
   }
+
+  async isFulfilled(dependency: QuestDependency) {
+    const { type } = dependency;
+    const childrenQuests = await this.getQuests(...dependency.dependentIds);
+    const markCompletedCount = childrenQuests.filter(
+      (quest) => quest.markCompleted,
+    );
+
+    switch (type) {
+      case QuestDependencyType.ONE_OF:
+        return markCompletedCount.length > 0;
+      case QuestDependencyType.ALL_TASKS:
+        return markCompletedCount.length === childrenQuests.length;
+      case QuestDependencyType.AT_LEAST_X_TASKS:
+        return markCompletedCount.length >= dependency.numMinTasks;
+    }
+  }
 }

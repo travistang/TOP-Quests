@@ -45,14 +45,19 @@ export class RecordingsService {
     return builder.orderBy('recording.createdAt', 'DESC').getMany();
   }
 
+  totalValuesOfQuest(questId: string, filter: RecordFilter) {
+    return this.findRecordsOfQuest(questId, filter).then((records) =>
+      records.reduce((acc, record) => acc + record.value, 0),
+    );
+  }
+
   async createRecording(
     createRecordingDto: CreateRecordingDto,
-    quest: Quest,
   ): Promise<Recording> {
     const recording = new Recording();
-    recording.quest = quest;
     recording.note = createRecordingDto.note;
     recording.value = createRecordingDto.value;
+    recording.questId = createRecordingDto.questId;
 
     return this.recordingRepository.save(recording);
   }

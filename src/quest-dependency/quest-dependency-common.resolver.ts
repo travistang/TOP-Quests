@@ -50,4 +50,9 @@ export class QuestDependencyCommonResolver {
       ...questDependency.dependentIds,
     );
   }
+
+  @ResolveField(() => Boolean)
+  async fulfilled(@Parent() questDependency: QuestDependency) {
+    return this.questDependencyService.isFulfilled(questDependency);
+  }
 }

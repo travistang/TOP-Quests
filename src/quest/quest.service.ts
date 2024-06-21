@@ -1,11 +1,5 @@
 import { Quest } from '@/entities/quest.entity';
-import {
-  DateRangeFilter,
-  RecordFilter,
-  Recording,
-} from '@/entities/recording.entity';
 import { Repeat } from '@/entities/repeat.entity';
-import { RecordingsService } from '@/recordings/recordings.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,7 +9,6 @@ import { UpdateQuestDto } from './dto/update-quest.dto';
 @Injectable()
 export class QuestService {
   constructor(
-    private readonly recordingService: RecordingsService,
     @InjectRepository(Quest)
     private readonly questRepository: Repository<Quest>,
     @InjectRepository(Repeat)
@@ -62,20 +55,5 @@ export class QuestService {
 
   async remove(id: string): Promise<void> {
     await this.questRepository.delete(id);
-  }
-
-  async getRecordings(
-    quest: Quest,
-    filter: RecordFilter,
-  ): Promise<Recording[]> {
-    return this.recordingService.findRecordsOfQuest(quest.id, filter);
-  }
-
-  async getAchievedValue(
-    quest: Quest,
-    dateRangeFilter: DateRangeFilter,
-  ): Promise<number> {
-    const recordings = await this.getRecordings(quest, dateRangeFilter);
-    return recordings.reduce((acc, recording) => acc + recording.value, 0);
   }
 }

@@ -37,6 +37,9 @@ export class Recording {
   @ManyToOne(() => Quest, (quest) => quest.recordings, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'questId' })
   quest: Quest;
+
+  @Column({ name: 'questId' })
+  questId: string;
 }
 
 @InputType()
@@ -49,6 +52,6 @@ export class DateRangeFilter {
 }
 @InputType()
 export class RecordFilter extends DateRangeFilter {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   sortedBy?: keyof Recording;
 }

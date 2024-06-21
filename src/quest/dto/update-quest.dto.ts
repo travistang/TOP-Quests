@@ -7,4 +7,7 @@ export class UpdateQuestDto extends PartialType(CreateQuestDto) {
   @Field(() => String)
   @IsUUID()
   id: string;
+
+  @Field(() => Boolean, { nullable: true })
+  markCompleted?: boolean;
 }

@@ -43,4 +43,7 @@ export class QuestDependency {
   dependentIds: string[];
   @Column('text', { nullable: true })
   _dependentIds: string;
+
+  @Field(() => Boolean)
+  fulfilled: boolean;
 }

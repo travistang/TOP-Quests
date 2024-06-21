@@ -38,6 +38,10 @@ export class Quest {
   @Column()
   description: string;
 
+  @Field(() => Boolean, { defaultValue: false })
+  @Column({ default: false })
+  markCompleted: boolean;
+
   @Field()
   @Column()
   target: number;
