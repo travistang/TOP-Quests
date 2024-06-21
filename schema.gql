@@ -34,6 +34,7 @@ type Quest {
   id: String!
   name: String!
   description: String!
+  markCompleted: Boolean!
   target: Float!
   unit: String!
   dueDate: DateTime
@@ -51,7 +52,7 @@ type Quest {
 input RecordFilter {
   start: DateTime
   end: DateTime
-  sortedBy: String!
+  sortedBy: String
 }
 
 enum QuestStatus {
@@ -69,6 +70,7 @@ type QuestDependency {
   parent: Quest!
   parentId: String!
   dependents: [Quest!]!
+  fulfilled: Boolean!
   children: [Quest!]!
 }
 
@@ -96,8 +98,8 @@ type Mutation {
   createQuest(createQuestDto: CreateQuestDto!): Quest!
   updateQuest(updateQuestDto: UpdateQuestDto!): Quest!
   removeQuest(id: String!): Quest!
-  addRecord(recording: CreateRecordingDto!): Recording!
   updateRecord(updateRecordingDto: UpdateRecordingDto!): Recording!
+  addRecord(recording: CreateRecordingDto!): Recording!
   createDependency(createDependencyDto: CreateQuestDependencyDto!): QuestDependency
   removeDependency(dependentId: String!): QuestDependency
   updateDependency(updateDependencyDto: UpdateQuestDependencyDto!): QuestDependency
@@ -129,18 +131,19 @@ input UpdateQuestDto {
   dueDate: DateTime
   repeat: CreateRepeatDto
   id: String!
-}
-
-input CreateRecordingDto {
-  questId: String!
-  value: Float!
-  note: String
+  markCompleted: Boolean
 }
 
 input UpdateRecordingDto {
   value: Float!
   note: String
   id: String!
+}
+
+input CreateRecordingDto {
+  questId: String!
+  value: Float!
+  note: String
 }
 
 input CreateQuestDependencyDto {
