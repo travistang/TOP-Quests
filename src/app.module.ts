@@ -7,7 +7,6 @@ import { AppService } from './app.service';
 
 import { Quest } from './entities/quest.entity';
 import { Recording } from './entities/recording.entity';
-import { Repeat } from './entities/repeat.entity';
 import { QuestModule } from './quest/quest.module';
 import { RecordingsModule } from './recordings/recordings.module';
 import { RepeatModule } from './repeat/repeat.module';
