@@ -10,12 +10,6 @@ export class UpdateQuestDto extends PartialType(CreateQuestDto) {
   @IsUUID()
   id: string;
 
-  @Field(() => Boolean, { nullable: true })
-  markCompleted?: boolean;
-
-  @Field(() => String, { nullable: true })
-  parentId?: string;
-
   @Field(() => QuestStatus, { nullable: true })
   status?: QuestStatus;
 

@@ -67,9 +67,25 @@ enum RepeatType {
   MONTHLY
 }
 
+type QuestSearchResult {
+  data: [Quest!]!
+  recordsCount: Int!
+  pagesCount: Int!
+}
+
 type Query {
   quests: [Quest!]!
   quest(id: String!): Quest!
+  searchQuests(search: QuestSearchDto!): QuestSearchResult!
+}
+
+input QuestSearchDto {
+  searchString: String
+  status: QuestStatus
+  createdBefore: DateTime
+  createdAfter: DateTime
+  pageSize: Int! = 10
+  page: Int! = 0
 }
 
 type Mutation {
@@ -108,8 +124,6 @@ input UpdateQuestDto {
   dueDate: DateTime
   repeat: CreateRepeatDto
   id: String!
-  markCompleted: Boolean
-  parentId: String
   status: QuestStatus
   statusRemark: String
 }

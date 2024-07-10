@@ -3,7 +3,6 @@ import { Quest } from '../entities/quest.entity';
 import { CreateQuestDto } from './dto/create-quest.dto';
 import { UpdateQuestDto } from './dto/update-quest.dto';
 import { QuestService } from './quest.service';
-import { Repeat } from '@/entities/repeat.entity';
 
 @Resolver(() => Quest)
 export class QuestResolver {
