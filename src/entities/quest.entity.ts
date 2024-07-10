@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,12 +12,13 @@ import {
 } from 'typeorm';
 import { Recording } from './recording.entity';
 import { Repeat } from './repeat.entity';
+import { QuestStatusHistory } from './quest-status-history.entity';
 
 export enum QuestStatus {
   NOT_STARTED = 'NOT_STARTED',
   ONGOING = 'ONGOING',
   COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
+  BLOCKED = 'BLOCKED',
 }
 
 registerEnumType(QuestStatus, {
@@ -38,9 +40,9 @@ export class Quest {
   @Column()
   description: string;
 
-  @Field(() => Boolean, { defaultValue: false })
-  @Column({ default: false })
-  markCompleted: boolean;
+  @Field(() => QuestStatus, { defaultValue: QuestStatus.NOT_STARTED })
+  @Column({ default: QuestStatus.NOT_STARTED, type: 'varchar', enum: QuestStatus })
+  status: QuestStatus;
 
   @Field()
   @Column()
@@ -65,14 +67,22 @@ export class Quest {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Field({ nullable: true })
-  @OneToOne(() => Repeat, (repeat) => repeat.quest, { nullable: true })
-  @JoinColumn({ name: 'repeatId' })
-  repeat?: Repeat;
+  @ManyToOne(() => Quest, quest => quest.parentId)
+  parent?: Quest;
+
+  @Column({ nullable: true })
+  parentId?: string;
+
+  @Column({ nullable: true })
+  repeat?: string;
 
   @OneToMany(() => Recording, (record) => record.quest, {
     nullable: true,
   })
   @JoinColumn()
   recordings: Recording[];
+
+
+  @OneToMany(() => QuestStatusHistory, (history) => history.quest)
+  statusHistory: QuestStatusHistory[];
 }

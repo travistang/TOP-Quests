@@ -1,12 +1,13 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Quest } from '../entities/quest.entity';
 import { CreateQuestDto } from './dto/create-quest.dto';
 import { UpdateQuestDto } from './dto/update-quest.dto';
 import { QuestService } from './quest.service';
+import { Repeat } from '@/entities/repeat.entity';
 
 @Resolver(() => Quest)
 export class QuestResolver {
-  constructor(private readonly questService: QuestService) {}
+  constructor(private readonly questService: QuestService) { }
 
   @Mutation(() => Quest)
   createQuest(@Args('createQuestDto') createQuestDto: CreateQuestDto) {
@@ -32,5 +33,16 @@ export class QuestResolver {
   removeQuest(@Args('id', { type: () => String }) id: string) {
     this.questService.remove(id);
     return { id } as Quest;
+  }
+
+  @ResolveField(() => Quest, { nullable: true })
+  parent(@Parent() quest: Quest) {
+    if (!quest.parentId) return null;
+    return this.questService.findOne(quest.parentId);
+  }
+
+  @ResolveField(() => [Quest], { nullable: true })
+  children(@Parent() quest: Quest) {
+    return this.questService.getChildren(quest);
   }
 }

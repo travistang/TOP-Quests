@@ -16,37 +16,37 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Repeat {
+type QuestStatusHistory {
   id: String!
-  type: RepeatType!
-  interval: Int!
-  quest: Quest!
+  date: DateTime!
+  from: QuestStatus!
+  to: QuestStatus!
+  remark: String!
 }
 
-enum RepeatType {
-  DAILY
-  WEEKLY
-  MONTHLY
-  YEARLY
+enum QuestStatus {
+  NOT_STARTED
+  ONGOING
+  COMPLETED
+  BLOCKED
 }
 
 type Quest {
   id: String!
   name: String!
   description: String!
-  markCompleted: Boolean!
+  status: QuestStatus!
   target: Float!
   unit: String!
   dueDate: DateTime
   startDate: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
+  parent: Quest
+  children: [Quest!]
   repeat: Repeat
+  statusHistory: [QuestStatusHistory!]!
   recordings(filter: RecordFilter!): [Recording!]!
-  currentInterval: QuestInterval
-  status: QuestStatus!
-  parentDependency: QuestDependency
-  childDependency: QuestDependency
 }
 
 input RecordFilter {
@@ -55,38 +55,16 @@ input RecordFilter {
   sortedBy: String
 }
 
-enum QuestStatus {
-  NOT_STARTED
-  ONGOING
-  COMPLETED
-  FAILED
+type Repeat {
+  type: RepeatType!
+  interval: Int!
+  dates: [Int!]!
 }
 
-type QuestDependency {
-  id: String!
-  type: QuestDependencyType!
-  numMinTasks: Int!
-  blocking: Boolean!
-  parent: Quest!
-  parentId: String!
-  dependents: [Quest!]!
-  fulfilled: Boolean!
-  children: [Quest!]!
-}
-
-enum QuestDependencyType {
-  ONE_OF
-  ALL_TASKS
-  AT_LEAST_X_TASKS
-}
-
-type QuestInterval {
-  quest: Quest!
-  startDate: DateTime!
-  endDate: DateTime
-  records: [Recording!]!
-  value: Float!
-  status: QuestStatus!
+enum RepeatType {
+  DAILY
+  WEEKLY
+  MONTHLY
 }
 
 type Query {
@@ -98,11 +76,9 @@ type Mutation {
   createQuest(createQuestDto: CreateQuestDto!): Quest!
   updateQuest(updateQuestDto: UpdateQuestDto!): Quest!
   removeQuest(id: String!): Quest!
+  updateQuestStatusHistory(historyId: String!, remark: String!): QuestStatusHistory!
   updateRecord(updateRecordingDto: UpdateRecordingDto!): Recording!
   addRecord(recording: CreateRecordingDto!): Recording!
-  createDependency(createDependencyDto: CreateQuestDependencyDto!): QuestDependency
-  removeDependency(dependentId: String!): QuestDependency
-  updateDependency(updateDependencyDto: UpdateQuestDependencyDto!): QuestDependency
 }
 
 input CreateQuestDto {
@@ -119,6 +95,7 @@ input CreateQuestDto {
 input CreateRepeatDto {
   type: RepeatType! = DAILY
   interval: Int! = 1
+  dates: [Int!] = []
 }
 
 input UpdateQuestDto {
@@ -132,6 +109,9 @@ input UpdateQuestDto {
   repeat: CreateRepeatDto
   id: String!
   markCompleted: Boolean
+  parentId: String
+  status: QuestStatus
+  statusRemark: String
 }
 
 input UpdateRecordingDto {
@@ -144,16 +124,4 @@ input CreateRecordingDto {
   questId: String!
   value: Float!
   note: String
-}
-
-input CreateQuestDependencyDto {
-  dependentId: String!
-  parentId: String!
-}
-
-input UpdateQuestDependencyDto {
-  dependentId: String!
-  type: QuestDependencyType
-  numMinTasks: Int
-  blocking: Boolean
 }
