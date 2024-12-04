@@ -4,7 +4,7 @@ import { CreateRepeatDto } from './dto/create-repeat-dto';
 import { differenceInDays, differenceInMonths, differenceInWeeks, getDate, getDay, getDaysInMonth, isBefore } from 'date-fns';
 import { IsDateInRepeatParams } from './types/repeat-types';
 
-const SERIALIZED_REPEAT_REGEXP = /^(DAILY|WEEKLY|MONTHLY)\|(\d+)\|(\d+(,\d+))*$/
+const SERIALIZED_REPEAT_REGEXP = /^(DAILY|WEEKLY|MONTHLY|YEARLY)\|(\d+)\|(\d+(,\d+))*$/
 
 @Injectable()
 export class RepeatService {
